@@ -5,8 +5,6 @@ import {
     Image, 
 } from "react-native";
 
-import { useNavigation } from "@react-navigation/native";
-
 import IllustrationImg from '../../assets/illustration.png'
 import { styles } from "./styles";
 
@@ -18,6 +16,7 @@ type Props = {
         navigate: Function;
     };
 }
+
 export const SignIn = ({navigation: {navigate}}:Props) =>{
 
     function handleSignIn(){

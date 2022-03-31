@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FlatList, Text, View } from "react-native";
+import { FlatList, View } from "react-native";
 import { Appointment } from "../../components/Appointment";
 import { Background } from "../../components/Background";
 import { ButtonAdd } from "../../components/ButtonAdd";
@@ -10,7 +10,13 @@ import { Profile } from "../../components/Profile";
 
 import {styles} from "./styles"
 
-export function Home(){
+type Props = {
+    navigation: {
+        navigate: Function;
+    };
+}
+
+export function Home({navigation: {navigate}}: Props){
     const [category, setCategory] = useState('');
 
     const appointments = [
@@ -38,17 +44,25 @@ export function Home(){
             date: '22/06 às 21:40',
             description: 'É hoje que vamos chegar ao challenger sem perder uma partida md10'
         }
-    ]
+    ];
+
+    function handleAppointmentCreate(){
+        navigate("AppointmentCreate")
+    }
 
     function handleCategorySelect(categoryId: string){
         categoryId === category ? setCategory('') : setCategory(categoryId)
-    }
+    };
+
+    function handleAppointmentDetails(){
+        navigate("AppointmentDetails")
+    };
 
     return(
         <Background>
             <View style={styles.header}>
                 <Profile/>
-                <ButtonAdd/>
+                <ButtonAdd onPress={handleAppointmentCreate}/>
             </View>
             <CategorySelect 
                 categorySelected={category}
@@ -65,7 +79,10 @@ export function Home(){
                     data={appointments}
                     keyExtractor={item => item.id}
                     renderItem={({item})=> (
-                        <Appointment data={item}/>
+                        <Appointment
+                            onPress={handleAppointmentDetails}
+                            data={item}
+                        />
                     )}
                     style={styles.matches}
                     showsVerticalScrollIndicator={false}

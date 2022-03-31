@@ -4,18 +4,13 @@ import { GestureHandlerRootView, RectButton, RectButtonProps } from "react-nativ
 
 import { categories } from "../../utils/categories";
 import { GuildIcon } from "../GuildIcon";
+import { GuildProps } from "../Guild";
+
 import PlayerSvg from "../../assets/player.svg"
 import CalendarSvg from "../../assets/calendar.svg"
 
 import { styles } from "./styles";
 import { theme } from "../../global/styles/theme";
-
-export type GuildProps = {
-    id: string;
-    name: string;
-    icon: null,
-    owner: boolean,
-}
 
 export type AppointmentProps = {
     id: string;
@@ -33,6 +28,7 @@ export function Appointment({data, ...rest}: Props){
     const [category] = categories.filter(item => item.id === data.category)
     const {owner} = data.guild;
     const {primary, on} = theme.colors;
+    
     return(
         <GestureHandlerRootView>
             <RectButton {...rest}>
