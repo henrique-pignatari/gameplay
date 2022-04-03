@@ -7,7 +7,6 @@ import { Home } from "../screens/Home";
 import { SignIn } from "../screens/SignIn";
 import { AppointmentDetails } from "../screens/AppointmentDetails";
 import { AppointmentCreate } from "../screens/AppointmentCreate";
-import { Guilds } from "../screens/Guilds";
 
 const {Navigator, Screen} = createNativeStackNavigator();
 
