@@ -1,9 +1,11 @@
-import React from "react";
+import React, {useContext} from "react";
 import {
     View, 
     Text,
     Image, 
 } from "react-native";
+
+import { UseAuth } from "../../hooks/auth";
 
 import IllustrationImg from '../../assets/illustration.png'
 import { styles } from "./styles";
@@ -18,6 +20,8 @@ type Props = {
 }
 
 export const SignIn = ({navigation: {navigate}}:Props) =>{
+
+    const {user} = UseAuth();
 
     function handleSignIn(){
         navigate('Home');
