@@ -43,7 +43,7 @@ export function Home({navigation: {navigate}}: Props){
             category: '1',
             date: '22/06 às 21:40',
             description: 'É hoje que vamos chegar ao challenger sem perder uma partida md10'
-        }
+        },
     ];
 
     function handleAppointmentCreate(){
@@ -69,7 +69,6 @@ export function Home({navigation: {navigate}}: Props){
                 setCategory={handleCategorySelect}
             />
 
-            <View style={styles.content}>
                 <ListHeader 
                     title="Partidas Agendadas" 
                     subtitle="Total 6"
@@ -87,8 +86,8 @@ export function Home({navigation: {navigate}}: Props){
                     style={styles.matches}
                     showsVerticalScrollIndicator={false}
                     ItemSeparatorComponent={() => <ListDivider/>}
+                    contentContainerStyle={{paddingBottom: 69}}
                 />
-            </View>
         </Background>
     );
 }
