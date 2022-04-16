@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { FlatList, View } from "react-native";
-import { Appointment } from "../../components/Appointment";
+
+import { Appointment, AppointmentProps } from "../../components/Appointment";
 import { Background } from "../../components/Background";
 import { ButtonAdd } from "../../components/ButtonAdd";
 import { CategorySelect } from "../../components/CategorySelect";
@@ -8,7 +9,12 @@ import { ListDivider } from "../../components/ListDivider";
 import { ListHeader } from "../../components/ListHearder";
 import { Profile } from "../../components/Profile";
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import {styles} from "./styles"
+import { COLLECTION_APPOINTMENTS } from "../../configs/database";
+import { Load } from "../../components/Load";
+import { useFocusEffect } from "@react-navigation/native";
 
 type Props = {
     navigation: {
@@ -18,33 +24,8 @@ type Props = {
 
 export function Home({navigation: {navigate}}: Props){
     const [category, setCategory] = useState('');
-
-    const appointments = [
-        {
-            id: '1',
-            guild: {
-                id: '1',
-                name: 'Lendarios',
-                icon: null,
-                owner: true,
-            },
-            category: '1',
-            date: '22/06 às 21:40',
-            description: 'É hoje que vamos chegar ao challenger sem perder uma partida md10'
-        },
-        {
-            id: '2',
-            guild: {
-                id: '1',
-                name: 'Lendarios',
-                icon: null,
-                owner: true,
-            },
-            category: '1',
-            date: '22/06 às 21:40',
-            description: 'É hoje que vamos chegar ao challenger sem perder uma partida md10'
-        },
-    ];
+    const [appointments,setAppointments] = useState<AppointmentProps[]>([]);
+    const [loading, setLoading] = useState(true)
 
     function handleAppointmentCreate(){
         navigate("AppointmentCreate")
@@ -54,9 +35,28 @@ export function Home({navigation: {navigate}}: Props){
         categoryId === category ? setCategory('') : setCategory(categoryId)
     };
 
-    function handleAppointmentDetails(){
-        navigate("AppointmentDetails")
+    function handleAppointmentDetails(appointmentSelected: AppointmentProps){
+        navigate("AppointmentDetails",{appointmentSelected})
     };
+
+    async function loadAppointments() {
+        const response = await AsyncStorage.getItem(COLLECTION_APPOINTMENTS);
+        const storage: AppointmentProps[] = response ? JSON.parse(response) : [];
+
+        if(category){
+            setAppointments(storage.filter(item =>{
+                return item.category === category
+            }))
+        }else{
+            setAppointments(storage);
+        }
+
+        setLoading(false);
+    };
+
+    useFocusEffect(useCallback(()=>{
+        loadAppointments();  
+    },[category]))
 
     return(
         <Background>
@@ -69,25 +69,32 @@ export function Home({navigation: {navigate}}: Props){
                 setCategory={handleCategorySelect}
             />
 
-                <ListHeader 
-                    title="Partidas Agendadas" 
-                    subtitle="Total 6"
-                />
+               {
+                loading ? 
+                <Load/>
+                :
+                <>
+                    <ListHeader 
+                        title="Partidas Agendadas" 
+                        subtitle={`Total ${appointments.length}`}
+                    />
 
-                <FlatList 
-                    data={appointments}
-                    keyExtractor={item => item.id}
-                    renderItem={({item})=> (
-                        <Appointment
-                            onPress={handleAppointmentDetails}
-                            data={item}
-                        />
-                    )}
-                    style={styles.matches}
-                    showsVerticalScrollIndicator={false}
-                    ItemSeparatorComponent={() => <ListDivider/>}
-                    contentContainerStyle={{paddingBottom: 69}}
-                />
+                    <FlatList 
+                        data={appointments}
+                        keyExtractor={item => item.id}
+                        renderItem={({item})=> (
+                            <Appointment
+                                data={item}
+                                onPress={() => handleAppointmentDetails(item)}
+                            />
+                        )}
+                        style={styles.matches}
+                        showsVerticalScrollIndicator={false}
+                        ItemSeparatorComponent={() => <ListDivider/>}
+                        contentContainerStyle={{paddingBottom: 69}}
+                    />
+                </>
+                }
         </Background>
     );
 }
