@@ -8,14 +8,6 @@ import React,
 
 import * as AuthSesion from 'expo-auth-session'
 
-import {
-    SCOPE,
-    CLIENT_ID,
-    CDN_IMAGE,
-    REDIRECT_URI,
-    RESPONSE_TYPE
-} from '../configs'
-
 import { api } from "../services/api";
 
 type User = {
@@ -39,7 +31,8 @@ type AuthProviderProps = {
 
 type AuthorizationResponse = AuthSesion.AuthSessionResult & {
     params: {
-        access_token: string
+        access_token?: string;
+        error?: string;
     }
 }
 
@@ -50,6 +43,13 @@ function AuthProvider({ children }: AuthProviderProps){
     const [loading,setLoading] = useState(false);
 
     async function signIn(){
+
+        const { SCOPE } = process.env;
+        const { CLIENT_ID } = process.env;
+        const { CDN_IMAGE } = process.env;
+        const { REDIRECT_URI } = process.env;
+        const { RESPONSE_TYPE } = process.env;
+
         try {
             setLoading(true);
             
@@ -58,7 +58,7 @@ function AuthProvider({ children }: AuthProviderProps){
             const {type, params} = await AuthSesion
             .startAsync({ authUrl }) as AuthorizationResponse;
 
-            if(type === "success"){
+            if(type === "success" && !params.error){
                 api.defaults.headers.common['authorization'] = `Bearer ${params.access_token}`;
 
                 const userInfo = await api.get('/users/@me');
@@ -69,14 +69,12 @@ function AuthProvider({ children }: AuthProviderProps){
                     firstName,
                     token: params.access_token
                 });
-
-                setLoading(false);
-            }else{
-                setLoading(false)
             }
 
         } catch{
-            throw new Error('Não foi possivel autnticar')
+            throw new Error('Não foi possivel autnticar');
+        } finally {
+            setLoading(false)
         }
     }
 

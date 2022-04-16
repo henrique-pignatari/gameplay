@@ -49,7 +49,7 @@ export function AppointmentCreate({navigation: {navigate}}:Props){
     };
 
     function handleCategorySelect(categoryId: string){
-        setCategory(categoryId)
+        categoryId === category ? setCategory('') : setCategory(categoryId)
     };
 
     return(
