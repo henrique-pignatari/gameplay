@@ -8,7 +8,7 @@ import AppLoading from "expo-app-loading";
 
 LogBox.ignoreLogs(['You are not currently signed in to Expo on your development machine.'])
 
-import { AuthProvider } from "./src/hooks/auth";
+import { AuthProvider } from "./src/hooks/auth"; 
 
 import { Routes } from "./src/routes";
 import { Background } from "./src/components/Background";
